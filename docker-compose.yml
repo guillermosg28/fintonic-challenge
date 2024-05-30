@@ -1,0 +1,32 @@
+version: '3'
+services:
+
+  fintonic-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - fintonic-mongodb
+    ports:
+      - "9292:9292"
+    container_name: fintonic-app
+    networks:
+      - fintonic-network
+
+  fintonic-mongodb:
+    container_name: fintonic-mongodb
+    image: mongo:latest
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - ./db-mongo:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=guillermosg
+      - MONGO_INITDB_ROOT_PASSWORD=123456
+    networks:
+      - fintonic-network
+
+networks:
+  fintonic-network:

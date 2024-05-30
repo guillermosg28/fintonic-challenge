@@ -1,0 +1,162 @@
+---
+openapi: 3.0.0
+info:
+  title: Fintonic Challenge
+  description: Services API Fintonic Challenge
+  version: "1.0"
+servers:
+  - url: http://localhost:9292/api/v1
+tags:
+  - name: fintonic-challenge
+    description: Fintonic Challenge operations
+
+paths:
+
+  /tasks:
+    get:
+      summary: Obtener todas las tareas
+      description: Recupera una lista de todas las tareas existentes.
+      operationId: allsTasks
+      responses:
+        '200':
+          description: Operation successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: Tasks not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      summary: Crear una nueva tarea
+      description: Permite a los usuarios crear una nueva tarea.
+      operationId: createTask
+      requestBody:
+        description: Datos de la nueva tarea
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskInput'
+      responses:
+        '200':
+          description: Operation successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: Instance not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+
+  schemas:
+    BadRequest:
+      description: Malformed request
+      allOf:
+        - $ref: '#/components/schemas/ErrorResponse'
+    Conflict:
+      description: Conflict
+      allOf:
+        - $ref: '#/components/schemas/ErrorResponse'
+
+    #Request
+    TaskInput:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Título de la tarea.
+        description:
+          type: string
+          description: Descripción de la tarea.
+        dueDate:
+          type: string
+          format: date
+          description: Fecha de vencimiento de la tarea.
+        tags:
+          type: array
+          items:
+            type: string
+          description: Etiquetas opcionales de la tarea.
+      required:
+        - title
+        - description
+        - dueDate
+      example:
+        title: "Crear CRUD"
+        description: "Crud de tareas."
+        dueDate: "2024-06-01"
+        tags: ["jira", "docker"]
+
+    #Response
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Error message"
+        code:
+          type: string
+          example: "Error"
+
+    TaskResponse:
+      type: object
+      properties:
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+
+    #Model
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identificador único de la tarea.
+        title:
+          type: string
+          description: Título de la tarea.
+        description:
+          type: string
+          description: Descripción de la tarea.
+        dueDate:
+          type: string
+          format: date
+          description: Fecha de vencimiento de la tarea.
+        tags:
+          type: array
+          items:
+            type: string
+          description: Etiquetas opcionales de la tarea.
+        status:
+          type: string
+          description: Estado de la tarea.
+      example:
+        id: "60c72b2f9b1e8b3f4d6e4a3b"
+        title: "Crear CRUD"
+        description: "Crud de tareas."
+        dueDate: "2024-06-01"
+        tags: ["jira", "docker"]
+        status: "PENDING"
